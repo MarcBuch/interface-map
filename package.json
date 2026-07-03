@@ -16,6 +16,7 @@
       "import": "./dist/index.js"
     }
   },
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "publishConfig": {
     "access": "public"
@@ -26,10 +27,13 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@opencode-ai/plugin": "^1.17.13",
     "ts-morph": "^28.0.0"
   },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.17.13"
+  },
   "devDependencies": {
+    "@opencode-ai/plugin": "^1.17.13",
     "@types/node": "^24.0.0",
     "typescript": "^5.9.2"
   },
