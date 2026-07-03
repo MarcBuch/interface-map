@@ -1,0 +1,46 @@
+{
+  "name": "@marcbuch/opencode-interface-map",
+  "version": "0.1.0",
+  "description": "OpenCode plugin that extracts compact interface maps from TypeScript source files.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.17.13",
+    "ts-morph": "^28.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "typescript",
+    "ast",
+    "developer-tools"
+  ],
+  "engines": {
+    "bun": ">=1.3.0"
+  }
+}
