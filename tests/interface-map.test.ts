@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test"
 
-import { InterfaceMapPlugin } from "../src"
+import InterfaceMapPluginDefault, { InterfaceMapPlugin } from "../src"
 import { getInterfaceMapTextFromSource } from "../src/interface-map"
 import { get_interface_map } from "../src/tool"
 
@@ -104,5 +104,9 @@ declare module "foo" {
     const plugin = await InterfaceMapPlugin({} as never)
 
     expect(plugin.tool?.get_interface_map).toBe(get_interface_map)
+  })
+
+  test("exports the plugin entrypoint as the default export", () => {
+    expect(InterfaceMapPluginDefault).toBe(InterfaceMapPlugin)
   })
 })

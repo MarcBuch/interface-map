@@ -9,3 +9,5 @@ export const InterfaceMapPlugin: Plugin = async () => {
     },
   }
 }
+
+export default InterfaceMapPlugin
