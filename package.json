@@ -1,6 +1,6 @@
 {
   "name": "@marcbuch/opencode-interface-map",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "OpenCode plugin that extracts compact interface maps from TypeScript source files.",
   "type": "module",
   "license": "MIT",
