@@ -37,6 +37,12 @@ function heritageText(node: { getHeritageClauses(): { getText(): string }[] }): 
   return clauses.length > 0 ? ` ${clauses.join(" ")}` : ""
 }
 
+function functionSignatureText(node: any): string {
+  const name = node.getName() ?? ""
+  const returnType = node.getReturnTypeNode()?.getText()
+  return `${modifiersText(node)}function ${name}${typeParametersText(node)}(${parametersText(node)})${returnType ? `: ${returnType}` : ""};`
+}
+
 function keySummaryFromObjectLiteral(node: any): string {
   const keys = node
     .getProperties()
@@ -92,10 +98,10 @@ function summarizeTypeAlias(statement: any, Node: any): string {
         return null
       })
       .filter(Boolean)
-    return `type ${statement.getName()} = { ${keys.join(", ")} }`
+    return `type ${statement.getName()}${typeParametersText(statement)} = { ${keys.join(", ")} }`
   }
 
-  return capText(statement.getText())
+  return `type ${statement.getName()}${typeParametersText(statement)} = ${capText(typeNode?.getText() ?? "unknown")}`
 }
 
 function summarizeExpression(expression: any, Node: any): string {
@@ -216,9 +222,7 @@ function emitModuleMembers(lines: string[], members: any[], Node: any): void {
     }
 
     if (Node.isFunctionDeclaration(member)) {
-      const name = member.getName() ?? ""
-      const returnType = member.getReturnTypeNode()?.getText()
-      lines.push(numberedLine(member.getStartLineNumber(), `${modifiersText(member)}function ${name}${typeParametersText(member)}(${parametersText(member)})${returnType ? `: ${returnType}` : ""} {}`))
+      lines.push(numberedLine(member.getStartLineNumber(), functionSignatureText(member)))
       continue
     }
 
@@ -291,9 +295,7 @@ export async function getInterfaceMapTextFromSource(sourceText: string): Promise
     }
 
     if (Node.isFunctionDeclaration(statement)) {
-      const name = statement.getName() ?? ""
-      const returnType = statement.getReturnTypeNode()?.getText()
-      lines.push(numberedLine(statement.getStartLineNumber(), `${modifiersText(statement)}function ${name}${typeParametersText(statement)}(${parametersText(statement)})${returnType ? `: ${returnType}` : ""} {}`))
+      lines.push(numberedLine(statement.getStartLineNumber(), functionSignatureText(statement)))
       continue
     }
 

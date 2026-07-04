@@ -36,7 +36,7 @@ export default function App() {
     expect(output).toMatch(/const schema = z\.object\(\{ id, nested \}\)\.extend\(\{ extra \}\)/s)
     expect(output).toMatch(/const route = createFileRoute\("\/users\/\$userId"\)\(\{ component \}\)/)
     expect(output).toMatch(/const settings = \{ alpha, beta \}/)
-    expect(output).toMatch(/export default function App\(\) \{\}/)
+    expect(output).toMatch(/export default function App\(\);/)
     expect(output).not.toContain(`hidden`)
     expect(output).not.toContain(`return null`)
   })
@@ -60,11 +60,24 @@ type Result = string | number
     expect(output).toContain(`type Result = string | number`)
   })
 
+  test("does not duplicate export for non-object type aliases", async () => {
+    const output = await getInterfaceMapTextFromSource(`
+export type Result = string | number
+`)
+
+    expect(output).toContain(`export type Result = string | number`)
+    expect(output).not.toContain(`export export type Result`)
+  })
+
   test("numbers source nodes, expands declarations, and omits nested implementation bodies", async () => {
     const output = await getInterfaceMapTextFromSource(`
 export declare namespace Api {
   interface Client {
     id: string
+  }
+
+  export function parse(input: string): string {
+    return input
   }
 
   const value: string
@@ -84,6 +97,10 @@ export class Service {
 
 const a = 1, b = 2
 
+export function format(value: string): string {
+  return value.trim()
+}
+
 declare module "foo" {
   export interface Config {
     enabled: boolean
@@ -92,12 +109,16 @@ declare module "foo" {
 `)
 
     expect(output).toMatch(/export declare namespace Api \{[\s\S]*interface Client \{[\s\S]*id: string[\s\S]*const value: string[\s\S]*\}/s)
+    expect(output).toMatch(/export declare namespace Api \{[\s\S]*export function parse\(input: string\): string;[\s\S]*\}/s)
     expect(output).toMatch(/export class Service \{[\s\S]*constructor\(private readonly name: string\);[\s\S]*\}/s)
     expect(output).toMatch(/const a = 1[\s\S]*const b = 2/s)
+    expect(output).toContain(`export function format(value: string): string;`)
     expect(output).toMatch(/declare module "foo" \{[\s\S]*export interface Config \{[\s\S]*enabled: boolean[\s\S]*\}/s)
     expect(output).not.toContain(`Hidden`)
     expect(output).not.toContain(`nested()`)
     expect(output).not.toContain(`return nested()`)
+    expect(output).not.toContain(`function format(value: string): string {}`)
+    expect(output).not.toContain(`function parse(input: string): string {}`)
   })
 
   test("registers the opencode tool from the plugin entrypoint", async () => {
